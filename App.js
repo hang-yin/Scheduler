@@ -8,7 +8,7 @@ import UserContext from './UserContext';
 import CourseEditScreen from './screens/CourseEditScreen';
 
 const Stack = createStackNavigator();
-
+// testing branch test1
 const App = () => {
   
   const [user, setUser] = useState({ role: 'admin'});
