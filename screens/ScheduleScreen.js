@@ -3,7 +3,12 @@ import UserContext from '../UserContext';
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import CourseList from '../components/CourseList';
 import CourseEditScreen from './CourseEditScreen';
+import {firebase} from '../firebase';
 
+const fixCourses = json => ({
+  ...json,
+  courses: Object.values(json.courses)
+});
 
 const ScheduleScreen = ({navigation}) => {
 
@@ -16,9 +21,17 @@ const ScheduleScreen = ({navigation}) => {
     navigation.navigate(canEdit ? 'CourseEditScreen' : 'CourseDetailScreen', { course });
   };
 
-  const url = 'https://courses.cs.northwestern.edu/394/data/cs-courses.php';
+  //const url = 'https://courses.cs.northwestern.edu/394/data/cs-courses.php';
 
   useEffect(() => {
+    const db = firebase.database().ref();
+    const handleData = snap => {
+      if (snap.val()) setSchedule(fixCourses(snap.val()));
+    }
+    db.on('value', handleData, error => alert(error));
+    return () => { db.off('value', handleData); };
+  }, []);
+  /*
     const fetchSchedule = async () => {
       const response = await fetch(url);
       if (!response.ok) throw response;
@@ -26,8 +39,8 @@ const ScheduleScreen = ({navigation}) => {
       setSchedule(json);
     }
     fetchSchedule();
-  }, [])
-
+  }, []);
+  */
   return (
     <SafeAreaView style={styles.container}>
       <Banner title={schedule.title} />
